@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {View, Text, TextInput, Image, KeyboardAvoidingView} from "react-native";
 
 import style from "../../styles/setup";
+import history from "../../history";
 
 import Button from "../widgets/button";
 import Error from "../widgets/error";
@@ -35,6 +36,16 @@ class SetupScreen extends Component {
         }
     }
 
+    startPicker = () => {
+        if(this.state.students != ""){
+            history.push("/picker");
+        }else{
+            this.setState({
+                error: "You must provide a number."
+            });
+        }
+    }
+
 
     render(){
         const {students, error} = this.state;
@@ -44,7 +55,7 @@ class SetupScreen extends Component {
                     <Image source={require("../../assets/ktslogo.png")} />
                     <Text style={style.label}>Number of Students</Text>
                     <TextInput style={style.textInput} value={this.state.students} onChangeText={(t) => this.updateInput(t)}/>
-                    <Button onClick={() => alert("Hello")} content="Start"/>
+                    <Button onClick={this.startPicker} content="Start"/>
                     <Error error={error}/>
                 </View>
             </KeyboardAvoidingView>

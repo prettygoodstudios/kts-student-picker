@@ -6,7 +6,7 @@ import style from "../../styles";
 const Button = (props) => {
     const {content, onClick} = props;
     return(
-        <TouchableOpacity onClick={onClick}>
+        <TouchableOpacity onPress={onClick}>
             <View style={style.button}>
                 <Text style={style.buttonText}>{content}</Text>
             </View>
