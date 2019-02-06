@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {View, Text, TextInput, Image, KeyboardAvoidingView} from "react-native";
+import {connect} from "react-redux";
 
+import * as actions from "../../actions";
 import style from "../../styles/setup";
 import history from "../../history";
 
@@ -37,7 +39,9 @@ class SetupScreen extends Component {
     }
 
     startPicker = () => {
-        if(this.state.students != ""){
+        const {students} = this.state;
+        if(students != ""){
+            this.props.generateStudents(parseInt(students));
             history.push("/picker");
         }else{
             this.setState({
@@ -63,4 +67,4 @@ class SetupScreen extends Component {
     }
 }
 
-export default SetupScreen;
+export default connect(null, actions)(SetupScreen);

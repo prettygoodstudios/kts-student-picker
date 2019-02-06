@@ -1,0 +1,1 @@
+export {generateStudents} from "./generate";
