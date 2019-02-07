@@ -1,25 +1,60 @@
 import React, {Component} from "react";
-import {View, Text} from "react-native";
+import {View, Text, Image} from "react-native";
 import {connect} from "react-redux";
 
 import * as actions from "../../actions";
+import styles from "../../styles/picker";
+import history from "../../history";
+
+import Button from "../widgets/button";
+import { isRequired } from "react-native/Libraries/StyleSheet/ColorPropType";
 
 class PickerScreen extends Component {
+
+
+    resartPicker = () => {
+        this.props.clearStudent();
+        history.push("/");
+    }
+
     render(){
+        const {pickStudent, students, student} = this.props;
         return(
-            <View style={{flexDirection: "column", justifyContent: "flex-start", display: "flex", marginTop: 20}}>
-                {this.props.students.map((x, i) => {
-                    return(<Text key={i} style={{color: "black", fontSize: 30}}>Student - {x}</Text>)
-                })}
+            <View style={styles.container}>
+                <Image source={require("../../assets/ktslogo.png")}/>
+                {   (student && students.length > 0) &&
+                    <View>
+                        <Text style={styles.student}>Student</Text>
+                        <Text style={styles.student}>{student.toString()}</Text>
+                    </View>
+                }
+                {   (!student && students.length > 0) &&
+                    <View>
+                        <Text style={styles.student}>Are you the luck one?</Text>
+                    </View>
+                }
+                {   (students.length == 0) ?
+                    <View>
+                        <Text style={styles.student}>Student</Text>
+                        <Text style={styles.student}>{student.toString()}</Text>
+                        <Button content="Restart" onClick={this.resartPicker}/>
+                    </View>
+                    :
+                    <View>
+                        <Button content="Feeling Lucky?" onClick={() => pickStudent(students)}/>
+                        <Button content="Restart" onClick={this.resartPicker} />
+                    </View>
+                }
             </View>
         );
     }
 }
 
 function mapStateToProps(state){
-    const {students} = state.students;
+    const {students, student} = state.students;
     return{
-        students
+        students,
+        student
     }
 }
 

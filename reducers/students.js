@@ -1,7 +1,8 @@
-import {GENERATE_STUDENTS} from "../actions/types";
+import {GENERATE_STUDENTS, PICK_STUDENT} from "../actions/types";
 
 const INIT_STATE = {
-    students: []
+    students: [],
+    student: undefined
 }
 
 export default function(state = INIT_STATE, action){
@@ -10,6 +11,12 @@ export default function(state = INIT_STATE, action){
             return {
                 ...state,
                 students: action.payload
+            }
+        case PICK_STUDENT:
+            return{
+                ...state,
+                students: action.payload.students,
+                student: action.payload.student
             }
         default:
             return {

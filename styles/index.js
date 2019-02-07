@@ -17,7 +17,9 @@ export default StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         height: 40,
-        width: 100
+        minWidth: 100,
+        paddingLeft: 20,
+        paddingRight: 20
     },
     buttonText: {
         color: PRIMARY_COLOR,
