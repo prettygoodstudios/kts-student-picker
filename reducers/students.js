@@ -1,8 +1,9 @@
-import {GENERATE_STUDENTS, PICK_STUDENT} from "../actions/types";
+import {GENERATE_STUDENTS, PICK_STUDENT, CLEAR_PICK} from "../actions/types";
 
 const INIT_STATE = {
     students: [],
-    student: undefined
+    student: undefined,
+    picked: false
 }
 
 export default function(state = INIT_STATE, action){
@@ -16,7 +17,13 @@ export default function(state = INIT_STATE, action){
             return{
                 ...state,
                 students: action.payload.students,
-                student: action.payload.student
+                student: action.payload.student,
+                picked: action.payload.picked
+            }
+        case CLEAR_PICK:
+            return{
+                ...state,
+                picked: false
             }
         default:
             return {

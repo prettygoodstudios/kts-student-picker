@@ -1,4 +1,4 @@
-import {PICK_STUDENT} from "./types";
+import {PICK_STUDENT, CLEAR_PICK} from "./types";
 
 export const pickStudent = (students) => {
     const index = Math.floor(students.length*Math.random());
@@ -9,7 +9,8 @@ export const pickStudent = (students) => {
         type: PICK_STUDENT,
         payload: {
             student: student,
-            students
+            students,
+            picked: true
         }
     }
 }
@@ -19,7 +20,15 @@ export const clearStudent = () => {
         type: PICK_STUDENT,
         payload: {
             student: undefined,
-            students: []
+            students: [],
+            picked: false
         }
+    }
+}
+
+export const clearPick = () => {
+    return {
+        type: CLEAR_PICK,
+        payload: false
     }
 }

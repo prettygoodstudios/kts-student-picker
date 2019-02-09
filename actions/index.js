@@ -1,2 +1,2 @@
 export {generateStudents} from "./generate";
-export {pickStudent, clearStudent} from './pick';
+export {pickStudent, clearStudent, clearPick} from './pick';
