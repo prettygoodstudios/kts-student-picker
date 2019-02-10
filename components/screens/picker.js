@@ -14,13 +14,15 @@ import history from "../../history";
 import Button from "../widgets/button";
 
 
-async function loadTextures(){
+async function loadTextures(image){
     const cubeTexture = await ExpoTHREE.loadTextureAsync({ asset: require("../../assets/ktscube.png") });
     const spriteTexture = await ExpoTHREE.loadTextureAsync({ asset: require("../../assets/star.png") });
+    const backgroundTexture = image != "" ? await ExpoTHREE.loadTextureAsync({ asset: image }) : "";
     //const avenirFont = await ExpoTHREE.loadAsync(require("../../assets/avenirmedium.json"));
     return {
         cubeTexture,
-        spriteTexture
+        spriteTexture,
+        backgroundTexture
     }
 }
 
@@ -70,8 +72,11 @@ class NumberRain extends Component {
     });
 
     // Scene
+    const {cubeTexture, spriteTexture, backgroundTexture} = await loadTextures(this.props.image);
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xffffff);
+    if(this.props.image != ""){
+        this.scene.background = backgroundTexture;
+    }
     //this.scene.background = new ThreeAR.BackgroundTexture(this.renderer);
 
     // Camera
@@ -80,7 +85,7 @@ class NumberRain extends Component {
         y: 5
     });
     // Cube
-    const {cubeTexture, spriteTexture} = await loadTextures();
+    
     const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
     const material = new THREE.MeshLambertMaterial({
       color: 0xffffff,
@@ -119,6 +124,7 @@ class PickerScreen extends Component {
     }
 
     animate = () => {
+        const {height, width} = Dimensions.get('window');
         const {stars} = this.state;
         const {speed} = this.props;
         let newStars = stars;
@@ -182,11 +188,12 @@ class PickerScreen extends Component {
     }
 
     render(){
-        const {pickStudent, students, student, clearPick, picked} = this.props;
+        const {pickStudent, students, student, clearPick, picked, image} = this.props;
         const {stars} = this.state;
         return(
             <View style={styles.container}>
-                <NumberRain students={students} clearPick={clearPick} picked={picked}/>
+                {image != "" && false && <Image source={{uri: image}} style={{width: "100%", height: "100%"}} />}
+                <NumberRain students={students} clearPick={clearPick} picked={picked} image={image}/>
                 <View style={styles.starWorld}>
                     {   stars.map((s, i) => {
                             return(
@@ -215,12 +222,13 @@ class PickerScreen extends Component {
 }
 
 function mapStateToProps(state){
-    const {students, student, picked, speed} = state.students;
+    const {students, student, picked, speed, image} = state.students;
     return{
         students,
         student,
         picked,
-        speed
+        speed,
+        image
     }
 }
 

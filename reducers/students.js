@@ -4,7 +4,8 @@ const INIT_STATE = {
     students: [],
     student: undefined,
     picked: false,
-    speed: "standard"
+    speed: "standard",
+    image: ""
 }
 
 export default function(state = INIT_STATE, action){
@@ -13,7 +14,8 @@ export default function(state = INIT_STATE, action){
             return {
                 ...state,
                 students: action.payload.students,
-                speed: action.payload.speed
+                speed: action.payload.speed,
+                image: action.payload.image
             }
         case PICK_STUDENT:
             return{

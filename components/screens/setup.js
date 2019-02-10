@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {View, Text, TextInput, Image, KeyboardAvoidingView, Picker} from "react-native";
 import {connect} from "react-redux";
+import {ImagePicker} from 'expo';
 
 import * as actions from "../../actions";
 import style from "../../styles/setup";
@@ -17,7 +18,8 @@ class SetupScreen extends Component {
         this.state = {
             students: "",
             error: "",
-            speed: "standard"
+            speed: "standard",
+            image: ""
         }
     }
 
@@ -47,9 +49,9 @@ class SetupScreen extends Component {
     }
 
     startPicker = () => {
-        const {students, speed} = this.state;
+        const {students, speed, image} = this.state;
         if(students != ""){
-            this.props.generateStudents(parseInt(students), speed);
+            this.props.generateStudents(parseInt(students), speed, image);
             history.push("/picker");
         }else{
             this.setState({
@@ -57,6 +59,19 @@ class SetupScreen extends Component {
             });
         }
     }
+
+    pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+        });
+
+        console.log(result);
+
+        if (!result.cancelled) {
+            this.setState({ image: result.uri });
+        }
+    };
 
 
     render(){
@@ -79,7 +94,8 @@ class SetupScreen extends Component {
                         <Picker.Item label="Standard" value="standard" />
                         <Picker.Item label="Fast" value="fast" />
                     </Picker>
-
+                    <Text style={style.label}>Background Image (Optional)</Text>
+                    <Button onClick={this.pickImage} content="Pick Image"/>
                     <Button onClick={this.startPicker} content="Start"/>
                     <Error error={error}/>
                 </View>

@@ -4,6 +4,7 @@ import { Router, Route, Switch} from "react-router";
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import ReduxThunk from 'redux-thunk';
+import {ScreenOrientation} from "expo";
 
 import styles from "./styles";
 import history from "./history";
@@ -26,7 +27,22 @@ import SetUpScreen from "./components/screens/setup";
 import PickerScreen from "./components/screens/picker";
 
 
+async function enableCameraRoll() {
+  const { Permissions } = Expo;
+  const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+  if (status !== 'granted') {
+    alert('Camera roll permissions are required in order to upload a background image.');
+  }
+}
+
+
 export default class App extends React.Component {
+
+  componentDidMount(){
+    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.ALL);
+    enableCameraRoll();
+  }
+
   render() {
     return (
       <View style={styles.container}>

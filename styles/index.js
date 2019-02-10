@@ -19,7 +19,8 @@ export default StyleSheet.create({
         height: 40,
         minWidth: 100,
         paddingLeft: 20,
-        paddingRight: 20
+        paddingRight: 20,
+        backgroundColor: "white"
     },
     buttonText: {
         color: PRIMARY_COLOR,
