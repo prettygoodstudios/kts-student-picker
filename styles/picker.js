@@ -13,5 +13,10 @@ export default StyleSheet.create({
         textAlign: "center",
         fontSize: 40,
         color: PRIMARY_COLOR
+    },
+    starWorld: {
+        position: "absolute",
+        width: "100%",
+        height: "100%"
     }
 });

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, TextInput, Image, KeyboardAvoidingView} from "react-native";
+import {View, Text, TextInput, Image, KeyboardAvoidingView, Picker} from "react-native";
 import {connect} from "react-redux";
 
 import * as actions from "../../actions";
@@ -8,6 +8,7 @@ import history from "../../history";
 
 import Button from "../widgets/button";
 import Error from "../widgets/error";
+import { PRIMARY_COLOR } from "../../styles";
 
 class SetupScreen extends Component {
 
@@ -15,7 +16,8 @@ class SetupScreen extends Component {
         super();
         this.state = {
             students: "",
-            error: ""
+            error: "",
+            speed: "standard"
         }
     }
 
@@ -26,10 +28,16 @@ class SetupScreen extends Component {
                     error: "You must provide an integer."
                 });
             }else{
-                this.setState({
-                    students: t,
-                    error: ""
-                });
+                if(t.indexOf("-") != -1){
+                    this.setState({
+                        error: "You must provide a positive number"
+                    });
+                }else{
+                    this.setState({
+                        students: t,
+                        error: ""
+                    });
+                }
             }
         }else{
             this.setState({
@@ -39,9 +47,9 @@ class SetupScreen extends Component {
     }
 
     startPicker = () => {
-        const {students} = this.state;
+        const {students, speed} = this.state;
         if(students != ""){
-            this.props.generateStudents(parseInt(students));
+            this.props.generateStudents(parseInt(students), speed);
             history.push("/picker");
         }else{
             this.setState({
@@ -52,13 +60,26 @@ class SetupScreen extends Component {
 
 
     render(){
-        const {students, error} = this.state;
+        const {students, error, speed} = this.state;
         return(
             <KeyboardAvoidingView behavior="padding" enabled>
                 <View style={style.container}>
                     <Image source={require("../../assets/ktslogo.png")} />
                     <Text style={style.label}>Number of Students</Text>
                     <TextInput style={style.textInput} value={this.state.students} onChangeText={(t) => this.updateInput(t)}/>
+                    <Text style={style.label}>Animation Speed</Text>
+                    <Picker
+                        selectedValue={this.state.speed}
+                        style={style.picker}
+                        itemStyle={{color: PRIMARY_COLOR}}
+                        onValueChange={(itemValue, itemIndex) =>
+                            this.setState({speed: itemValue})
+                        }
+                    >
+                        <Picker.Item label="Standard" value="standard" />
+                        <Picker.Item label="Fast" value="fast" />
+                    </Picker>
+
                     <Button onClick={this.startPicker} content="Start"/>
                     <Error error={error}/>
                 </View>

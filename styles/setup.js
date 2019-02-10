@@ -16,6 +16,13 @@ export default StyleSheet.create({
         color: PRIMARY_COLOR,
         fontSize: 20
     },
+    picker: {
+        marginTop: -50,
+        marginBottom: 150,
+        height: 30,
+        width: 100,
+        display: "flex"
+    },
     textInput: {
         borderColor: PRIMARY_COLOR,
         color: PRIMARY_COLOR,

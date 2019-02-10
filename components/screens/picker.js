@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, Image, Dimensions} from "react-native";
+import {View, Text, Image, Dimensions, ImageBackground} from "react-native";
 import {connect} from "react-redux";
 import {GLView} from "expo";
 import ExpoTHREE, { THREE } from "expo-three";
@@ -8,6 +8,7 @@ import {GraphicsView} from 'expo-graphics';
 
 import * as actions from "../../actions";
 import styles from "../../styles/picker";
+import {PRIMARY_COLOR} from "../../styles";
 import history from "../../history";
 
 import Button from "../widgets/button";
@@ -23,7 +24,7 @@ async function loadTextures(){
     }
 }
 
-//const {height, width} = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 
 class NumberRain extends Component {
 
@@ -86,10 +87,8 @@ class NumberRain extends Component {
       map: cubeTexture
     });
     
-    this.sprites = [];
     this.cube = new THREE.Mesh(geometry, material);
     this.scene.add(this.cube);
-    //Text
     
     // Light
     this.scene.add(new THREE.AmbientLight(0xffffff));
@@ -97,110 +96,54 @@ class NumberRain extends Component {
     this.camera.position.z = 5;
   };
 
-
-  startPickAnimation = async () => {
-    const {spriteTexture} = await loadTextures();
-    this.sprites = [];
-    const spriteMaterial = new THREE.SpriteMaterial( { map: spriteTexture, color: 0xffffff } );
-    const winner = new THREE.Sprite( spriteMaterial );
-    const xWinner = Math.random()*2.5-1.25;
-    winner.scale.set(0.3,0.3,0.3);
-    winner.position.set(xWinner, 0, 2);
-    const winnerTextMesh = new TextMesh();
-    winnerTextMesh.material = new THREE.MeshPhongMaterial({ color: 0x056ecf });
-    winnerTextMesh.update({
-        text: this.props.student,
-        font: require("../../assets/avenirmedium.json"),
-        size: 30, //Size of the text. Default is 100.
-        height: 5, //Thickness to extrude text. Default is 50.
-        curveSegments: 12, // — Integer. Number of points on the curves. Default is 12.
-        bevelEnabled: false, // — Boolean. Turn on bevel. Default is False.
-        bevelThickness: 1, // — Float. How deep into text bevel goes. Default is 10.
-        bevelSize: 0.8, // — Float. How far from text outline is bevel. Default is 8.
-        bevelSegments: 0.3,
-    });
-    ExpoTHREE.utils.scaleLongestSideToSize(winnerTextMesh, 5);
-    ExpoTHREE.utils.alignMesh(winnerTextMesh, { y: 5, x: xWinner, z: -100 });
-    const winnerState = {
-        winner: true,
-    }
-    const winnerObject = {
-        student: this.props.student,
-        sprite: winner,
-        state: winnerState,
-        textMesh: winnerTextMesh
-    }
-    this.scene.add(winner);
-    this.sprites.push(winnerObject);
-    const losers = this.props.students.length < 5 ? this.props.students.length : 5;
-    
-    for(let i = 0; i < losers; i++){
-        const sprite = new THREE.Sprite( spriteMaterial );
-        sprite.scale.set(0.3,0.3,0.3);
-        const xPos = Math.random()*2.5-1.25;
-        sprite.position.set(xPos, 0, 2);
-        const state = {
-            winner: false,
-        }
-        const textMesh = new TextMesh();
-        textMesh.material = new THREE.MeshPhongMaterial({ color: 0x056ecf });
-        textMesh.update({
-            text: this.props.students[i],
-            font: require("../../assets/avenirmedium.json"),
-            size: 30, //Size of the text. Default is 100.
-            height: 5, //Thickness to extrude text. Default is 50.
-            curveSegments: 12, // — Integer. Number of points on the curves. Default is 12.
-            bevelEnabled: false, // — Boolean. Turn on bevel. Default is False.
-            bevelThickness: 1, // — Float. How deep into text bevel goes. Default is 10.
-            bevelSize: 0.8, // — Float. How far from text outline is bevel. Default is 8.
-            bevelSegments: 0.3,
-        });
-        ExpoTHREE.utils.scaleLongestSideToSize(textMesh, 5);
-        ExpoTHREE.utils.alignMesh(textMesh, { y: -1, x: xPos, z: -50 });
-        const spriteObject = {
-            student: this.props.students[i],
-            sprite,
-            state,
-            textMesh
-        }
-        this.scene.add(sprite);
-        this.scene.add(textMesh);
-        this.sprites.push(spriteObject);
-    }
-  }
-
   onRender = () => {
-      if(this.props.picked){
-        this.startPickAnimation();
-        this.props.clearPick();
-      }
       const {x, y} = this.state;
       this.cube.rotation.x += 0.01;
       this.cube.rotation.y += 0.01;
-      if(y < 0){
-          this.setState({
-              y: 5
-          });
-          this.sprites.filter((s) => !s.winner).forEach((s) => {
-            this.scene.remove(s.sprite);
-            this.scene.remove(s.textMesh);
-          });
-          this.sprites = [];
-      }else{
-        this.setState({
-            x: x,
-            y: y-0.02
-        });
-      }
       this.cube.position.set(0, 1, 0);
-      this.sprites.forEach(({sprite}) => {
-        sprite.position.set(sprite.position.x, y, 2);
-      });
       this.renderer.render(this.scene, this.camera);
   }; 
 }
 
 class PickerScreen extends Component {
+
+    constructor(){
+        super();
+        this.state = {
+            stars: []
+        }
+    }
+
+    componentDidMount(){
+        setInterval(this.animate, 1000/60);
+    }
+
+    animate = () => {
+        const {stars} = this.state;
+        const {speed} = this.props;
+        let newStars = stars;
+        newStars.map((s) => {
+            let newStar = s;
+            if(newStar.delay == 0 && !(newStar.winner && newStar.y > height/2 + newStar.size/2) && newStar.y < height + newStar.size){
+                newStar.y += 10;
+                if(speed == "fast"){
+                    newStar.y += 10;
+                }
+            }else{
+                newStar.delay -= 1;
+            }
+            if(newStar.y > height/2 && newStar.winner && newStar.size < 200){
+                newStar.size += 5;
+                if(speed == "fast"){
+                    newStar.size += 5;
+                }
+            }
+            return newStar;
+        });
+        this.setState({
+            stars: newStars
+        })
+    }
 
 
     resartPicker = () => {
@@ -208,31 +151,61 @@ class PickerScreen extends Component {
         history.push("/");
     }
 
+    pickStudent = (student, students) => {
+        let stars  = [];
+        stars.push({
+            student,
+            winner: true,
+            x: Math.floor(Math.random()*(width-100))+50,
+            y: -80,
+            size: 70,
+            delay: Math.floor(Math.random()*120)
+        });
+        const prob = (5/students.length);
+        students.forEach((s) => {
+            if(Math.random() <= prob && stars.length < 5){
+                let starX =  Math.floor(Math.random()*(width-40))+20;
+                let delay = Math.floor(Math.random()*120);
+                stars.push({
+                    student: s,
+                    winner: false,
+                    x: Math.floor(Math.random()*(width-100))+50,
+                    y: -80,
+                    size: 70,
+                    delay
+                });
+            }
+        });
+        this.setState({
+            stars
+        });
+    }
+
     render(){
         const {pickStudent, students, student, clearPick, picked} = this.props;
+        const {stars} = this.state;
         return(
             <View style={styles.container}>
                 <NumberRain students={students} clearPick={clearPick} picked={picked}/>
-                {   (student && students.length > 0) &&
-                    <View>
-                        <Text style={styles.student}>Student</Text>
-                        <Text style={styles.student}>{student.toString()}</Text>
-                    </View>
-                }
-                {   (!student && students.length > 0) &&
-                    <View>
-                        <Text style={styles.student}>Are you the lucky one?</Text>
-                    </View>
-                }
+                <View style={styles.starWorld}>
+                    {   stars.map((s, i) => {
+                            return(
+                                <View style={{position: "absolute", top: s.y-s.size/2, left: s.x-s.size/2, width: s.size, height: s.size, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}} key={i}>
+                                    <ImageBackground source={require("../../assets/gifticon.png")} style={{width: s.size, height: s.size, display: "flex", justifyContent: "center", alignItems: "center"}}>
+                                        <Text style={{color: "white", fontSize: s.size*0.3}}>{s.student}</Text>
+                                    </ImageBackground>
+                                </View>
+                            );
+                        })
+                    }
+                </View>
                 {   (students.length == 0) ?
                     <View>
-                        <Text style={styles.student}>Student</Text>
-                        <Text style={styles.student}>{student.toString()}</Text>
                         <Button content="Restart" onClick={this.resartPicker}/>
                     </View>
                     :
                     <View>
-                        <Button content="Feeling Lucky?" onClick={() => pickStudent(students)}/>
+                        <Button content="Feeling Lucky?" onClick={() => pickStudent(students, this.pickStudent)}/>
                         <Button content="Restart" onClick={this.resartPicker} />
                     </View>
                 }
@@ -242,11 +215,12 @@ class PickerScreen extends Component {
 }
 
 function mapStateToProps(state){
-    const {students, student, picked} = state.students;
+    const {students, student, picked, speed} = state.students;
     return{
         students,
         student,
-        picked
+        picked,
+        speed
     }
 }
 
