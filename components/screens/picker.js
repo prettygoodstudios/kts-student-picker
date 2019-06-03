@@ -175,7 +175,7 @@ class PickerScreen extends Component {
                 stars.push({
                     student: s,
                     winner: false,
-                    x: Math.floor(Math.random()*(width-100))+50,
+                    x: Math.floor(Math.random()*(width-200))+100,
                     y: -80,
                     size: 70,
                     delay
@@ -192,7 +192,7 @@ class PickerScreen extends Component {
         const {stars} = this.state;
         return(
             <View style={styles.container}>
-                {image != "" && false && <Image source={{uri: image}} style={{width: "100%", height: "100%"}} />}
+                {image != "" && false && <Image source={{uri: image}} style={{}}/>}
                 <NumberRain students={students} clearPick={clearPick} picked={picked} image={image}/>
                 <View style={styles.starWorld}>
                     {   stars.map((s, i) => {
