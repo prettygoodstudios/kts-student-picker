@@ -115,12 +115,19 @@ class PickerScreen extends Component {
     constructor(){
         super();
         this.state = {
-            stars: []
+            stars: [],
+            animationLoop: null
         }
     }
 
     componentDidMount(){
-        setInterval(this.animate, 1000/60);
+        this.setState({
+            animationLoop: requestAnimationFrame(this.animate)
+        });
+    }
+
+    componentWillUnmount(){
+       cancelAnimationFrame(this.state.animationLoop);
     }
 
     animate = () => {
@@ -147,8 +154,9 @@ class PickerScreen extends Component {
             return newStar;
         });
         this.setState({
-            stars: newStars
-        })
+            stars: newStars,
+            animationLoop: requestAnimationFrame(this.animate)
+        });
     }
 
 
