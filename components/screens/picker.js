@@ -10,6 +10,8 @@ import * as actions from "../../actions";
 import styles from "../../styles/picker";
 import {PRIMARY_COLOR} from "../../styles";
 import history from "../../history";
+import { Asset } from 'expo-asset';
+
 
 import Button from "../widgets/button";
 
@@ -17,12 +19,10 @@ import Button from "../widgets/button";
 async function loadTextures(image){
     const cubeTexture = await ExpoTHREE.loadTextureAsync({ asset: require("../../assets/ktscube.png") });
     const spriteTexture = await ExpoTHREE.loadTextureAsync({ asset: require("../../assets/star.png") });
-    const backgroundTexture = image != "" ? await ExpoTHREE.loadTextureAsync({ asset: image }) : "";
-    //const avenirFont = await ExpoTHREE.loadAsync(require("../../assets/avenirmedium.json"));
+
     return {
         cubeTexture,
-        spriteTexture,
-        backgroundTexture
+        spriteTexture
     }
 }
 
@@ -49,7 +49,7 @@ class NumberRain extends Component {
       <GraphicsView
         onContextCreate={this.onContextCreate}
         onRender={this.onRender}
-        style={{width: "100%", height: "100%", position: "absolute", zIndex: -100}}
+        style={{width: "100%", height: "100%", position: "absolute", zIndex: 1}}
       />
     );
   }
@@ -72,12 +72,8 @@ class NumberRain extends Component {
     });
 
     // Scene
-    const {cubeTexture, spriteTexture, backgroundTexture} = await loadTextures(this.props.image);
+    const {cubeTexture, spriteTexture} = await loadTextures(this.props.image);
     this.scene = new THREE.Scene();
-    if(this.props.image != ""){
-        this.scene.background = backgroundTexture;
-    }
-    //this.scene.background = new ThreeAR.BackgroundTexture(this.renderer);
 
     // Camera
     this.camera = new THREE.PerspectiveCamera( 75, width/height, 0.1, 1000 );
@@ -108,6 +104,22 @@ class NumberRain extends Component {
       this.cube.position.set(0, 1, 0);
       this.renderer.render(this.scene, this.camera);
   }; 
+}
+
+const Background = (props) => {
+    const {children, image} = props;
+    if(image == ""){
+        return(
+            <View style={{width: "100%", height: "100%", flexDirection: "column", justifyContent: "flex-end"}}>
+                {children}
+            </View>
+        )
+    }
+    return (
+        <ImageBackground source={{uri: image}} style={{width: "100%", height: "100%", flexDirection: "column", justifyContent: "flex-end"}}>
+            {children}
+        </ImageBackground>
+    )
 }
 
 class PickerScreen extends Component {
@@ -200,30 +212,34 @@ class PickerScreen extends Component {
         const {stars} = this.state;
         return(
             <View style={styles.container}>
-                {image != "" && false && <Image source={{uri: image}} style={{}}/>}
-                <NumberRain students={students} clearPick={clearPick} picked={picked} image={image}/>
-                <View style={styles.starWorld}>
-                    {   stars.map((s, i) => {
-                            return(
-                                <View style={{position: "absolute", top: s.y-s.size/2, left: s.x-s.size/2, width: s.size, height: s.size, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}} key={i}>
-                                    <ImageBackground source={require("../../assets/gifticon.png")} style={{width: s.size, height: s.size, display: "flex", justifyContent: "center", alignItems: "center"}}>
-                                        <Text style={{color: "white", fontSize: s.size*0.3}}>{s.student}</Text>
-                                    </ImageBackground>
-                                </View>
-                            );
-                        })
+                <Background image={image}>
+                    <NumberRain students={students} clearPick={clearPick} picked={picked} image={image}/>
+
+                    <View style={styles.starWorld}>
+                        {   stars.map((s, i) => {
+                                return(
+                                    <View style={{position: "absolute", top: s.y-s.size/2, left: s.x-s.size/2, width: s.size, height: s.size, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}} key={i}>
+                                        <ImageBackground source={require("../../assets/gifticon.png")} style={{width: s.size, height: s.size, display: "flex", justifyContent: "center", alignItems: "center"}}>
+                                            <Text style={{color: "white", fontSize: s.size*0.3}}>{s.student}</Text>
+                                        </ImageBackground>
+                                    </View>
+                                );
+                            })
+                        }
+                    </View>
+                </Background>
+                <View style={{zIndex: 999, position: "absolute", left: 0, top: 0, width: "100%", height: "100%", flexDirection: "column", justifyContent: "flex-end"}}>
+                    {   (students.length == 0) ?
+                        <View>
+                            <Button content="Restart" onClick={this.resartPicker}/>
+                        </View>
+                        :
+                        <View>
+                            <Button content="Feeling Lucky?" onClick={() => pickStudent(students, this.pickStudent)}/>
+                            <Button content="Restart" onClick={this.resartPicker} />
+                        </View>
                     }
                 </View>
-                {   (students.length == 0) ?
-                    <View>
-                        <Button content="Restart" onClick={this.resartPicker}/>
-                    </View>
-                    :
-                    <View>
-                        <Button content="Feeling Lucky?" onClick={() => pickStudent(students, this.pickStudent)}/>
-                        <Button content="Restart" onClick={this.resartPicker} />
-                    </View>
-                }
             </View>
         );
     }
