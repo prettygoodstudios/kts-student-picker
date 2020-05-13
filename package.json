@@ -7,20 +7,25 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "expo": "^32.0.0",
-    "expo-graphics": "^1.0.3",
-    "expo-three": "^3.0.0-alpha.8",
-    "history": "^4.7.2",
-    "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
-    "react-redux": "^6.0.0",
-    "react-router": "^4.3.1",
-    "react-router-native": "^4.3.0",
-    "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "babel-preset-expo": "^8.1.0",
+    "expo": "^37.0.10",
+    "expo-core": "^3.0.1",
+    "expo-gl": "^8.1.0",
+    "expo-graphics": "^1.1.0",
+    "expo-three": "^5.4.0",
+    "history": "^4.10.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-native": "^0.61.4",
+    "react-redux": "^7.2.0",
+    "react-router": "^5.2.0",
+    "react-router-native": "^5.2.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "three": "^0.116.1",
+    "expo-screen-orientation": "~1.0.0",
+    "expo-image-picker": "~8.1.0"
   },
-  "devDependencies": {
-    "babel-preset-expo": "^5.0.0"
-  },
+  "devDependencies": {},
   "private": true
 }

@@ -3,8 +3,6 @@ import {PICK_STUDENT, CLEAR_PICK} from "./types";
 export const pickStudent = (students, success) => {
     const index = Math.floor(students.length*Math.random());
     const student = students.splice(index, 1);
-    console.log("student", student[0]);
-    console.log("students", students);
     success(student[0], students);
     return {
         type: PICK_STUDENT,

@@ -4,7 +4,8 @@ import { Router, Route, Switch} from "react-router";
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import {ScreenOrientation} from "expo";
+import * as ScreenOrientation from 'expo-screen-orientation';
+
 
 import styles from "./styles";
 import history from "./history";
@@ -39,7 +40,7 @@ async function enableCameraRoll() {
 export default class App extends React.Component {
 
   componentDidMount(){
-    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.ALL);
+    //ScreenOrientation.allowAsync(ScreenOrientation.Orientation.ALL);
     enableCameraRoll();
   }
 

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {View, Text, TextInput, Image, KeyboardAvoidingView, Picker} from "react-native";
 import {connect} from "react-redux";
-import {ImagePicker} from 'expo';
+import * as ImagePicker from 'expo-image-picker';
 
 import * as actions from "../../actions";
 import style from "../../styles/setup";
